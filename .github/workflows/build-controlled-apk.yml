@@ -1,0 +1,52 @@
+# 只为「被控通道」这个 fork 出包：自己用，不发 Release、不推更新。
+name: build-controlled-apk
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [feat/controlled-link]
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: 3.47.7
+  TZ: Asia/Shanghai
+
+jobs:
+  apk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: flutter pub get
+        working-directory: app
+        run: flutter pub get
+
+      - name: build apk (arm64, release)
+        run: bash tooling/build-apk.sh -f arm64
+
+      - name: list outputs
+        if: always()
+        run: ls -lh app/build/app/outputs/flutter-apk/ || true
+
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: dsh-go-controlled-arm64
+          path: app/build/app/outputs/flutter-apk/*.apk
+          if-no-files-found: error
