@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../remote/controlled_link.dart';
+import '../../remote/controlled_link.dart';
 
 class ControlledLinkPage extends StatefulWidget {
   const ControlledLinkPage({super.key});
