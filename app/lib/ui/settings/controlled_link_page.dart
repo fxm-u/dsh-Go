@@ -9,6 +9,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../remote/controlled_link.dart';
 
+/// 让启动时能自动把这个页面推到最前面（第一次配置用）。
+final GlobalKey<NavigatorState> controlledLinkNavKey = GlobalKey<NavigatorState>();
+
 class ControlledLinkPage extends StatefulWidget {
   const ControlledLinkPage({super.key});
 
