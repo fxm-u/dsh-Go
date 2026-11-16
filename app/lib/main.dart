@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,6 +23,20 @@ import 'ui/tavern/tavern_home_page.dart';
 import 'ui/theme/theme.dart';
 
 Future<void> main() => runWithFrameProbe(_startApp);
+
+/// 第一次装上还没填地址时，直接把被控通道页推到前面，省得找不到入口。
+Future<void> autoOpenControlledLink() async {
+  final prefs = await SharedPreferences.getInstance();
+  if ((prefs.getString('controlled_link.base') ?? '').trim().isNotEmpty) return;
+  for (var i = 0; i < 40; i++) {
+    final nav = controlledLinkNavKey.currentState;
+    if (nav != null) {
+      nav.push(MaterialPageRoute<void>(builder: (_) => const ControlledLinkPage()));
+      return;
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 250));
+  }
+}
 
 Future<void> _startApp() async {
   if (!frameProbeEnabled) SteadyFrameBinding();
@@ -46,4 +61,5 @@ Future<void> _startApp() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(dshSystemOverlay(PlatformDispatcher.instance.platformBrightness));
   runApp(const ProviderScope(child: DshApp()));
+  unawaited(autoOpenControlledLink());
 }
