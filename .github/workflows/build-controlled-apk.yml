@@ -38,6 +38,11 @@ jobs:
           channel: stable
           cache: true
 
+      - name: NDK 28.2
+        run: |
+          yes | "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" --install "ndk;28.2.13676358" > /dev/null
+          echo "ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/28.2.13676358" >> "$GITHUB_ENV"
+
       - name: runtime 下载缓存
         uses: actions/cache@v4
         with:
