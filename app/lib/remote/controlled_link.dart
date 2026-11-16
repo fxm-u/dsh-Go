@@ -101,7 +101,7 @@ class ControlledLink {
     } catch (error) {
       _failures += 1;
       _status = ControlledLinkStatus(running: true, lastError: '$error', lastCommand: _status.lastCommand, lastAckAt: _status.lastAckAt);
-      final seconds = (2 * _failures).clamp(_pollGap.inSeconds, _maxBackoff.inSeconds);
+      final seconds = (2 * _failures).clamp(_pollGap.inSeconds, _maxBackoff.inSeconds).toInt();
       final backoff = Duration(seconds: seconds);
       _schedule(backoff);
     } finally {
